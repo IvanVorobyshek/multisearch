@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Vendor\Multisearch\Api\MultisearchInterface"
+                type="Vendor\Multisearch\Model\Api\MultiQuickSearch"/>
+
+    <preference for="Vendor\Multisearch\Api\ClientInterface"
+                type="Vendor\Multisearch\Model\MultisearchClient" />
+
+    <preference for="Amasty\Feed\Model\Rule\GetValidFeedProducts"
+                type="Vendor\Multisearch\Model\Rule\GetValidFeedProducts" />
+
+    <preference for="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection\TotalRecordsResolver"
+                type="Vendor\Multisearch\Model\Search\ResourceModel\Fulltext\Collection\TotalRecordsResolver"/>
+
+    <type name="Amasty\Feed\Model\Feed">
+        <plugin name="add_categories_to_feed_header"
+                type="Vendor\Multisearch\Plugin\AddCategoriesToFeedHeader"/>
+    </type>
+
+    <type name="Amasty\Feed\Model\Export\Adapter\Xml">
+        <plugin name="separate_category_ids"
+                type="Vendor\Multisearch\Plugin\DataFeedProcessing"/>
+    </type>
+
+    <type name="Magento\LayeredNavigation\Block\Navigation">
+          <plugin name="add_multisearch_filters"
+                  type="Vendor\Multisearch\Plugin\LayeredNavigationFilters" />
+    </type>
+
+    <type name="Magento\Search\Model\AdapterFactory">
+        <arguments>
+            <argument name="adapters" xsi:type="array">
+                <item name="multisearch" xsi:type="string">Vendor\Multisearch\Model\Search\Adapter</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Search\Model\EngineResolver">
+        <arguments>
+            <argument name="engines" xsi:type="array">
+                <item name="multisearch" xsi:type="string">multisearch</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Search\Model\Adminhtml\System\Config\Source\Engine">
+        <arguments>
+            <argument name="engines" xsi:type="array">
+                <item name="multisearch" xsi:type="string">Multisearch</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="multisearchCategoryCollectionFactory" type="Magento\CatalogSearch\Model\ResourceModel\Fulltext\SearchCollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Vendor\Multisearch\Model\ResourceModel\Product\CategoryCollection</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="multisearchFulltextSearchCollectionFactory" type="Magento\CatalogSearch\Model\ResourceModel\Fulltext\SearchCollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Vendor\Multisearch\Model\ResourceModel\Product\SearchCollection</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="elasticsearchLayerCategoryItemCollectionProvider" type="Magento\Elasticsearch\Model\Layer\Category\ItemCollectionProvider">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="multisearch" xsi:type="object">multisearchCategoryCollectionFactory</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="elasticsearchLayerSearchItemCollectionProvider" type="Magento\Elasticsearch\Model\Layer\Search\ItemCollectionProvider">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="multisearch" xsi:type="object">multisearchFulltextSearchCollectionFactory</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\CatalogSearch\Model\Search\ItemCollectionProvider">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="multisearch" xsi:type="object">Amasty\ElasticSearch\Model\ResourceModel\Advanced\CollectionFactory</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Search\Model\EngineResolver">
+        <plugin name="multisearch_amasty_engine_resolver" type="Vendor\Multisearch\Plugin\EngineResolverPlugin"/>
+    </type>
+
+    <preference for="Amasty\Feed\Model\Feed\Downloader" type="Vendor\Multisearch\Model\Feed\Downloader" />
+</config>
