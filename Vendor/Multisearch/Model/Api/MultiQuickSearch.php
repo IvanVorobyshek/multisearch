@@ -75,7 +75,7 @@ class MultiQuickSearch implements MultisearchInterface
             $product->setImages($itemData['picture'] ? [['url' => $itemData['picture']]] : []);
 
             $this->eventManager->dispatch(
-                'Vendor_multiquick_search', [
+                'vendor_multiquick_search', [
                     'product' => $product,
                     'responseItemData' => $itemData,
                     'query' => $query,

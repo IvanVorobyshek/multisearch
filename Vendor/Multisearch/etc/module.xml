@@ -4,6 +4,9 @@
         <sequence>
             <module name="Magento_CatalogSearch"/>
             <module name="Magento_Search"/>
+            <module name="Vendor_Xsearch"/>
+            <module name="Amasty_Multisearch"/>
+            <module name="Amasty_Feed"/>
         </sequence>
     </module>
 </config>
